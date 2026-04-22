@@ -2,9 +2,9 @@
 
 Automated security control validation lab for Windows, Linux, web, Microsoft Entra, and Okta.
 
-`controlguard` est un outil Python qui verifie automatiquement des controles de securite sur une machine, une cible web ou une plateforme IAM, puis produit un rapport exploitable par un analyste, une pipeline CI/CD, ou un exercice de hardening.
+`controlguard` verifies security controls on hosts, web targets, and identity platforms, then turns the result into structured audit evidence for analysts, CI/CD pipelines, and hardening workflows.
 
-## Architecture visuelle
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,7 @@ flowchart LR
     L --> M["Analyst Review / CI / GitHub / Dashboards"]
 ```
 
-## Workflow visuel
+## Workflow
 
 ```mermaid
 flowchart TD
@@ -49,8 +49,8 @@ flowchart TD
 
 | Status | Count | Visual |
 | --- | --- | --- |
-| `pass` | `2` | `██████████` |
-| `fail` | `2` | `██████████` |
+| `pass` | `2` | `##########` |
+| `fail` | `2` | `##########` |
 | `warn` | `0` | `-` |
 | `error` | `0` | `-` |
 | `evidence_missing` | `0` | `-` |
@@ -71,101 +71,116 @@ flowchart TD
 - [sample-report.sarif](docs/samples/sample-report.sarif)
 - [sample-compare.html](docs/samples/sample-compare.html)
 
-## Pourquoi ce projet
+## Why this project
 
-Le projet adresse quatre usages clairs :
+The project targets four concrete use cases:
 
-- audit : chaque controle produit un statut, une preuve, une source de preuve et une remediaton
-- compliance : les controles peuvent etre relies a des frameworks comme `CIS`, `NIST CSF`, `ISO 27001`, `OWASP`
-- hardening : les ecarts de configuration sont identifies de maniere actionnable
-- automation : les scans retournent des codes de sortie stables et des formats de sortie machine-friendly
+- audit: each control returns a status, evidence, evidence source, and remediation
+- compliance: controls can be rolled up into `CIS`, `NIST CSF`, `ISO 27001`, and `OWASP`
+- hardening: the engine points directly to actionable security gaps
+- automation: scans return stable exit codes and machine-friendly outputs
 
-## Ce que le moteur sait faire
+## What the engine already does
 
-- scoring strict : `evidence_missing` ne donne aucun point
-- separation nette entre `fail`, `error`, `not_applicable` et `evidence_missing`
-- controles obligatoires bloquants dans le resume final
-- synthese par framework
-- validation forte des profils avant execution
-- formats de sortie `markdown`, `json`, `html`, `csv`, `sarif`
-- comparaison entre deux scans JSON avec delta de score, blockers resolus et regressions
+- strict weighted scoring
+- explicit separation between `fail`, `error`, `not_applicable`, and `evidence_missing`
+- required controls that block compliance
+- framework summaries
+- built-in profiles
+- deterministic report comparison
+- Markdown, JSON, HTML, CSV, and SARIF outputs
 
-## Controles deja couverts
+## What makes this strict
 
-- pare-feu Windows actif
-- Windows Event Log actif
-- Microsoft Defender actif
-- UAC active
-- PowerShell Script Block Logging actif
-- RDP desactive
-- SMBv1 desactive
-- Secure Boot actif
-- ports sensibles exposes
-- chiffrement BitLocker du disque systeme
-- headers de securite HTTP presents et conformes
-- permissions trop larges sur un chemin cible
-- MFA admin verifiee automatiquement via Microsoft Graph
-- MFA admin verifiee automatiquement via Okta
-- pare-feu Linux
-- auditd
-- SSH password authentication
+- `not_applicable` is excluded from score instead of acting like an implicit pass
+- `evidence_missing` gives zero credit
+- a required blocking control makes the scan non-compliant
+- framework rollups reuse the same strict scoring rules as the global score
+
+## Covered controls
+
+- Windows Firewall enabled
+- Windows Event Log running
+- Microsoft Defender running
+- UAC enabled
+- PowerShell Script Block Logging enabled
+- RDP disabled
+- SMBv1 disabled
+- Secure Boot enabled
+- sensitive ports exposure
+- BitLocker system drive encryption
+- web security headers
+- broad permissions on target paths
+- admin MFA via Microsoft Graph
+- admin MFA via Okta
+- Linux firewall
+- Linux auditd
+- Linux SSH password authentication
 
 ## Installation
 
-```bash
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -e .
 ```
 
-## Profils integres
+For development tooling:
 
-- `lab` : profil de demonstration complet
-- `windows-workstation` : hardening poste Windows
-- `linux-server` : hardening serveur Linux
-- `web-application` : controles web et security headers
-- `entra-admin-mfa` : MFA admin via Microsoft Graph
-- `okta-admin-mfa` : MFA admin via Okta
+```powershell
+pip install -e .[dev]
+```
+
+## Built-in profiles
+
+- `lab`: end-to-end demonstration profile
+- `windows-workstation`: Windows hardening baseline
+- `linux-server`: Linux hardening baseline
+- `web-application`: web security headers profile
+- `entra-admin-mfa`: Microsoft Graph admin MFA
+- `okta-admin-mfa`: Okta admin MFA
 
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](ROADMAP.md)
 - [Release notes v0.1.0](docs/RELEASE_NOTES_v0.1.0.md)
+- [Live validation playbook](docs/LIVE_VALIDATION_PLAYBOOK.md)
+- [Contributing](CONTRIBUTING.md)
 
-## Commandes utiles
+## Useful commands
 
-Lancer le profil principal :
+Run the main profile:
 
 ```bash
 controlguard scan --profile lab
 ```
 
-Valider seulement un profil :
+Validate only a profile:
 
 ```bash
 controlguard validate --profile windows-workstation
 ```
 
-Exporter un rapport HTML :
+Export an HTML report:
 
 ```bash
 controlguard scan --profile windows-workstation --format html --output reports/windows.html
 ```
 
-Exporter uniquement les findings en SARIF :
+Export only findings as SARIF:
 
 ```bash
 controlguard scan --profile lab --only-failed --format sarif --output reports/lab.sarif
 ```
 
-Comparer deux scans JSON :
+Compare two JSON scan reports:
 
 ```bash
 controlguard compare --baseline reports/baseline.json --current reports/current.json --format markdown
 ```
 
-## Exemples inclus dans le repo
+## Included examples
 
 - [sample-report.json](docs/samples/sample-report.json)
 - [sample-report.html](docs/samples/sample-report.html)
@@ -173,11 +188,11 @@ controlguard compare --baseline reports/baseline.json --current reports/current.
 - [sample-compare.md](docs/samples/sample-compare.md)
 - [sample-compare.html](docs/samples/sample-compare.html)
 
-## Configuration Microsoft Graph
+## Microsoft Graph configuration
 
-Le controle `microsoft_graph_admin_mfa` utilise `userRegistrationDetails` pour verifier les comptes admin actifs.
+The `microsoft_graph_admin_mfa` control uses `userRegistrationDetails` to verify active admin accounts.
 
-Variables d'environnement attendues :
+Expected environment variables:
 
 ```powershell
 $env:CONTROLGUARD_GRAPH_TENANT_ID="your-tenant-id"
@@ -186,73 +201,79 @@ $env:CONTROLGUARD_GRAPH_CLIENT_SECRET="your-app-client-secret"
 controlguard scan --profile entra-admin-mfa --format markdown
 ```
 
-Pre-requis :
+Prerequisites:
 
-- permission Graph `AuditLog.Read.All` en application
-- consentement admin
-- licence Microsoft Entra ID P1 ou P2 pour les rapports d'authentification
+- `AuditLog.Read.All` application permission
+- admin consent
+- Microsoft Entra ID P1 or P2 licensing for authentication methods reporting
 
-## Configuration Okta
+## Okta configuration
 
-Le controle `okta_admin_mfa` liste les utilisateurs avec role admin puis verifie qu'ils ont au moins un facteur MFA fort actif.
+The `okta_admin_mfa` control lists admin users and verifies that each one has at least one strong enrolled MFA factor.
 
-Exemple avec un access token deja acquis :
+Example with a pre-acquired access token:
 
 ```powershell
 $env:CONTROLGUARD_OKTA_ACCESS_TOKEN="your-okta-access-token"
 controlguard scan --profile okta-admin-mfa --format markdown
 ```
 
-Pre-requis recommandes :
+Recommended prerequisites:
 
-- scopes `okta.roles.read` et `okta.users.read`
-- ou API token `SSWS` si tu choisis ce mode
-- facteurs forts par defaut : `push`, `signed_nonce`, `webauthn`, `u2f`, `token:software:totp`, `token:hardware`
+- scopes such as `okta.roles.read` and `okta.users.read`
+- or an `SSWS` API token if you use that mode
+- strong factor defaults: `push`, `signed_nonce`, `webauthn`, `u2f`, `token:software:totp`, `token:hardware`
 
-## Codes de sortie
+## Exit codes
 
-- `0` : aucun finding bloquant
-- `1` : `fail`, `error` ou `evidence_missing`
-- `1` aussi avec `--fail-on-warn` si un `warn` existe
-- `1` aussi avec `--strict` si n'importe quel finding existe
-- `2` : erreur de configuration, de chargement ou de comparaison
+- `0`: no blocking finding
+- `1`: `fail`, `error`, or `evidence_missing`
+- `1` also with `--fail-on-warn` if a `warn` exists
+- `1` also with `--strict` if any finding exists
+- `2`: configuration, loading, or comparison error
 
-## Formats de sortie
+## Output formats
 
-- `markdown` : lecture humaine rapide
-- `json` : integration pipeline et post-traitement
-- `html` : executive summary + technical details
-- `csv` : export tabulaire
-- `sarif` : integration security tooling / code scanning
+- `markdown`: fast human reading
+- `json`: automation and post-processing
+- `html`: executive summary plus technical details
+- `csv`: tabular export
+- `sarif`: security tooling and code-scanning integration
 
-## Ce que le rapport HTML montre
+## What the HTML report shows
 
-- score ring global
-- distribution visuelle des statuts
-- distribution visuelle des severites
-- cartes par framework
-- vue des blockers
-- table findings + details techniques repliables
+- global score ring
+- visual status distribution
+- visual severity distribution
+- framework cards
+- blocker view
+- findings table plus expandable technical detail
 
-## Ce qui rend le projet solide pour un portfolio cyber
+## Validated today
 
-- logique d'audit credible
-- coverage multi-surface : host, web, IAM
-- connecteurs IAM reels
-- controle strict de l'applicabilite et de la preuve
-- reporting presentable
-- CI et tests automatises
+Validated in this repository:
 
-## Limitations connues
+- unit test suite
+- multi-profile validation
+- deterministic sample report generation
+- quality tooling configuration for CI
 
-- les connecteurs Microsoft Graph et Okta doivent encore etre valides sur de vrais tenants
-- le projet reste un lab avance, pas encore une plateforme SOC complete
-- la profondeur cloud posture est encore limitee en dehors des connecteurs IAM
+Still pending live proof:
 
-## Pistes suivantes
+- Microsoft Graph validation on a real tenant
+- Okta validation on a real tenant
 
-- validation live sur un vrai tenant Microsoft Graph
-- validation live sur un vrai tenant Okta
-- connecteurs AWS / Azure / GCP posture
-- plus de controles Linux et TLS
-- dashboard avec historique de scans
+## Threat model and limits
+
+- the tool validates declared controls, not the entire security posture of an environment
+- a `pass` means evidence was observed for that control, not that the system is fully secure
+- connector quality also depends on the permissions and APIs available in the target environment
+- this is an advanced lab, not yet a full SOC platform
+
+## Next steps
+
+- live Microsoft Graph validation
+- live Okta validation
+- AWS / Azure / GCP posture connectors
+- more Linux and TLS controls
+- historical scan dashboards
