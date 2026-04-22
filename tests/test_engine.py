@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+import platform
 import tempfile
 import unittest
 from contextlib import redirect_stdout, redirect_stderr
@@ -156,7 +157,8 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(summary.applicable_controls, 1)
         self.assertTrue(summary.compliant)
 
-    def test_engine_marks_linux_control_not_applicable_on_windows_host(self) -> None:
+    @patch("controlguard.engine.platform.system", return_value="Windows")
+    def test_engine_marks_linux_control_not_applicable_on_windows_host(self, mocked_system) -> None:
         config = LabConfig(
             lab_name="linux",
             description="",
