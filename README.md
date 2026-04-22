@@ -37,7 +37,11 @@ flowchart TD
 
 ## Apercu visuel
 
-![controlguard report preview](docs/assets/report-preview.png)
+<img
+  src="https://raw.githubusercontent.com/omarbabba779xx/Controlguard/main/docs/assets/report-preview.png"
+  alt="controlguard report preview"
+  width="100%"
+/>
 
 ## Pourquoi ce projet
 
