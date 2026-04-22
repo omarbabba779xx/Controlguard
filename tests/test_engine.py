@@ -218,9 +218,9 @@ class SummaryTests(unittest.TestCase):
 
 
 class NetworkAndWebChecksTests(unittest.TestCase):
-    @patch("controlguard.checks.network.run_powershell_json")
-    def test_sensitive_ports_ignore_loopback(self, mocked_run) -> None:
-        mocked_run.return_value = [
+    @patch("controlguard.checks.network._list_listening_connections")
+    def test_sensitive_ports_ignore_loopback(self, mocked_connections) -> None:
+        mocked_connections.return_value = [
             {"LocalAddress": "127.0.0.1", "LocalPort": 3389, "OwningProcess": 999, "ProcessName": "rdp"},
             {"LocalAddress": "10.0.0.5", "LocalPort": 445, "OwningProcess": 888, "ProcessName": "system"},
         ]
