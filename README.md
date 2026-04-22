@@ -35,6 +35,10 @@ flowchart TD
     G --> H["Compare runs over time"]
 ```
 
+## Apercu visuel
+
+![controlguard report preview](docs/assets/report-preview.svg)
+
 ## Pourquoi ce projet
 
 Le projet adresse quatre usages clairs :
@@ -123,6 +127,14 @@ Comparer deux scans JSON :
 controlguard compare --baseline reports/baseline.json --current reports/current.json --format markdown
 ```
 
+## Exemples inclus dans le repo
+
+- [sample-report.json](docs/samples/sample-report.json)
+- [sample-report.html](docs/samples/sample-report.html)
+- [sample-report.sarif](docs/samples/sample-report.sarif)
+- [sample-compare.md](docs/samples/sample-compare.md)
+- [sample-compare.html](docs/samples/sample-compare.html)
+
 ## Configuration Microsoft Graph
 
 Le controle `microsoft_graph_admin_mfa` utilise `userRegistrationDetails` pour verifier les comptes admin actifs.
@@ -192,6 +204,12 @@ Pre-requis recommandes :
 - controle strict de l'applicabilite et de la preuve
 - reporting presentable
 - CI et tests automatises
+
+## Limitations connues
+
+- les connecteurs Microsoft Graph et Okta doivent encore etre valides sur de vrais tenants
+- le projet reste un lab avance, pas encore une plateforme SOC complete
+- la profondeur cloud posture est encore limitee en dehors des connecteurs IAM
 
 ## Pistes suivantes
 

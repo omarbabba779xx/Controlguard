@@ -1,0 +1,49 @@
+{
+  "baseline_lab_name": "controlguard sample report",
+  "current_lab_name": "controlguard sample report",
+  "baseline_generated_at": "2026-04-20T02:30:00+00:00",
+  "current_generated_at": "2026-04-22T02:30:00+00:00",
+  "baseline_score": 31.0,
+  "current_score": 61.5,
+  "score_delta": 30.5,
+  "baseline_blocking_controls": [
+    "windows-defender-running",
+    "security-headers",
+    "admin-mfa"
+  ],
+  "current_blocking_controls": [
+    "windows-defender-running",
+    "security-headers"
+  ],
+  "resolved_blocking_controls": [
+    "admin-mfa"
+  ],
+  "new_blocking_controls": [],
+  "control_changes": [
+    {
+      "control_id": "admin-mfa",
+      "title": "MFA active pour les acces admin",
+      "severity": "critical",
+      "baseline_status": "evidence_missing",
+      "current_status": "pass"
+    }
+  ],
+  "framework_changes": [
+    {
+      "framework": "CIS Controls v8",
+      "baseline_score": 40.0,
+      "current_score": 70.0,
+      "delta": 30.0,
+      "baseline_compliant": false,
+      "current_compliant": false
+    },
+    {
+      "framework": "ISO 27001:2022",
+      "baseline_score": 0.0,
+      "current_score": 50.0,
+      "delta": 50.0,
+      "baseline_compliant": false,
+      "current_compliant": false
+    }
+  ]
+}

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>controlguard sample report</title>
+  <style>
+    :root {
+      --bg: #f2ede3;
+      --panel: #fffdf8;
+      --panel-strong: #f6e5c7;
+      --panel-dark: #f0e3d0;
+      --ink: #1f2933;
+      --muted: #5d6b79;
+      --line: #d7c6aa;
+      --accent: #a0432a;
+      --accent-soft: #ecd6bf;
+      --pass: #2d7a46;
+      --warn: #b97a12;
+      --fail: #b03a2e;
+      --error: #7d2338;
+      --na: #6f7d89;
+      --missing: #8b5c1e;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      background:
+        radial-gradient(circle at top left, #fff8ed 0%, rgba(255, 248, 237, 0.55) 26%, transparent 58%),
+        radial-gradient(circle at bottom right, rgba(202, 141, 90, 0.12) 0%, transparent 38%),
+        linear-gradient(180deg, #f8f3eb 0%, var(--bg) 100%);
+      color: var(--ink);
+    }
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 36px 24px 72px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #fffdf8 0%, var(--panel-strong) 100%);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 20px 46px rgba(31, 41, 51, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(160, 67, 42, 0.15) 0%, rgba(160, 67, 42, 0) 70%);
+      pointer-events: none;
+    }
+    .eyebrow {
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+      gap: 28px;
+      align-items: center;
+    }
+    .hero-copy p {
+      font-size: 1.05rem;
+      margin-top: 14px;
+      max-width: 700px;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .card {
+      background: rgba(255, 253, 248, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+    .score-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .section {
+      margin-top: 30px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    h1, h2, h3 {
+      margin: 0;
+    }
+    p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(31, 41, 51, 0.05);
+    }
+    .framework-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .framework-card {
+      background: linear-gradient(180deg, #fffdf8 0%, #f7f1e8 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .framework-score {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .bars {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 52px;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+    .bar-track {
+      background: #efe5d8;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 12px;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.88rem;
+      border: 1px solid var(--line);
+      background: #f8f2e8;
+    }
+    .chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .blocker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .blocker-card {
+      background: linear-gradient(180deg, #fff9f8 0%, #faece7 100%);
+      border: 1px solid #e4c5bc;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: var(--panel);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(31, 41, 51, 0.05);
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #efe3cf;
+      font-size: 0.95rem;
+    }
+    .status-pill, .severity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .severity-pill {
+      color: #fffdf8;
+    }
+    .detail-card {
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 18px;
+    }
+    .detail-card summary {
+      cursor: pointer;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .detail-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+    pre {
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--muted);
+      background: #fbf7f0;
+      border: 1px solid #eadbc6;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+    .muted {
+      color: var(--muted);
+    }
+    @media (max-width: 920px) {
+      .hero-grid, .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .bar-row {
+        grid-template-columns: 100px 1fr 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Security Control Validation Lab</div>
+          <h1>controlguard sample report</h1>
+          <p>Deterministic sample report committed to the repository for demonstration purposes.</p>
+          <div class="meta-grid">
+            <div class='card'><strong>Score</strong><br>61.5%</div>
+<div class='card'><strong>Posture</strong><br>weak</div>
+<div class='card'><strong>Compliant</strong><br>false</div>
+<div class='card'><strong>Blocking controls</strong><br>windows-defender-running, security-headers</div>
+          </div>
+          <div class="chip-row">
+            <span class='chip'><strong>generated:</strong> 2026-04-22T02:30:00+00:00</span>
+            <span class='chip'><strong>platform:</strong> Windows-11 sample</span>
+            <span class='chip'><strong>applicable:</strong> 4/4</span>
+          </div>
+        </div>
+        <div class="score-wrap">
+          
+    <div class='panel' style='text-align:center; max-width:320px; width:100%;'>
+      <div class='muted' style='margin-bottom:10px'>Global compliance score</div>
+      <svg width='220' height='220' viewBox='0 0 220 220' role='img' aria-label='Global compliance score'>
+        <circle cx='110' cy='110' r='78' fill='none' stroke='#eadbc6' stroke-width='16'></circle>
+        <circle
+          cx='110'
+          cy='110'
+          r='78'
+          fill='none'
+          stroke='#b03a2e'
+          stroke-width='16'
+          stroke-linecap='round'
+          stroke-dasharray='490.09'
+          stroke-dashoffset='188.68'
+          transform='rotate(-90 110 110)'></circle>
+        <text x='110' y='103' text-anchor='middle' style='font-size:42px; font-weight:700; fill:#1f2933'>61.5</text>
+        <text x='110' y='128' text-anchor='middle' style='font-size:16px; fill:#5d6b79'>score</text>
+      </svg>
+      <div class='chip-row' style='justify-content:center'><span class='chip'><strong>detail:</strong> 4 applicable controls</span></div>
+    </div>
+    
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Executive summary</h2>
+          <p>Generated at 2026-04-22T02:30:00+00:00 on Windows-11 sample. The current posture is weak with a weighted score of 61.5%.</p>
+        </div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="panel">
+          <h3>Status distribution</h3>
+          <p class="muted">Visual breakdown of control outcomes across the scan.</p>
+          <div class='bars'><div class='bar-row'><div>pass</div><div class='bar-track'><div class='bar-fill' style='width:50.0%; background:#2d7a46;'></div></div><div>2</div></div><div class='bar-row'><div>warn</div><div class='bar-track'><div class='bar-fill' style='width:0.0%; background:#b97a12;'></div></div><div>0</div></div><div class='bar-row'><div>fail</div><div class='bar-track'><div class='bar-fill' style='width:50.0%; background:#b03a2e;'></div></div><div>2</div></div><div class='bar-row'><div>error</div><div class='bar-track'><div class='bar-fill' style='width:0.0%; background:#7d2338;'></div></div><div>0</div></div><div class='bar-row'><div>evidence missing</div><div class='bar-track'><div class='bar-fill' style='width:0.0%; background:#8b5c1e;'></div></div><div>0</div></div><div class='bar-row'><div>not applicable</div><div class='bar-track'><div class='bar-fill' style='width:0.0%; background:#6f7d89;'></div></div><div>0</div></div></div>
+        </div>
+        <div class="panel">
+          <h3>Severity distribution</h3>
+          <p class="muted">Where the control population is concentrated by risk level.</p>
+          <div class='bars'><div class='bar-row'><div>critical</div><div class='bar-track'><div class='bar-fill' style='width:50.0%; background:#8f2b1f;'></div></div><div>2</div></div><div class='bar-row'><div>high</div><div class='bar-track'><div class='bar-fill' style='width:50.0%; background:#b85a2b;'></div></div><div>2</div></div><div class='bar-row'><div>medium</div><div class='bar-track'><div class='bar-fill' style='width:0.0%; background:#d48f1c;'></div></div><div>0</div></div><div class='bar-row'><div>low</div><div class='bar-track'><div class='bar-fill' style='width:0.0%; background:#6f7d89;'></div></div><div>0</div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Framework summary</h2>
+          <p>Roll-up by framework so you can read the result like an audit dashboard.</p>
+        </div>
+      </div>
+      <div class="framework-grid">
+        <div class='framework-card'><div class='muted'>CIS Controls v8</div><div class='framework-score' style='color:#b97a12'>70.0%</div><p>3 applicable / 3 total</p><div class='chip-row'><span class='chip'><strong>compliant:</strong> false</span><span class='chip'><strong>blockers:</strong> windows-defender-running</span></div></div>
+<div class='framework-card'><div class='muted'>ISO 27001:2022</div><div class='framework-score' style='color:#b03a2e'>50.0%</div><p>2 applicable / 2 total</p><div class='chip-row'><span class='chip'><strong>compliant:</strong> false</span><span class='chip'><strong>blockers:</strong> security-headers</span></div></div>
+<div class='framework-card'><div class='muted'>NIST CSF 2.0</div><div class='framework-score' style='color:#b03a2e'>50.0%</div><p>2 applicable / 2 total</p><div class='chip-row'><span class='chip'><strong>compliant:</strong> false</span><span class='chip'><strong>blockers:</strong> windows-defender-running</span></div></div>
+<div class='framework-card'><div class='muted'>OWASP</div><div class='framework-score' style='color:#b03a2e'>0.0%</div><p>1 applicable / 1 total</p><div class='chip-row'><span class='chip'><strong>compliant:</strong> false</span><span class='chip'><strong>blockers:</strong> security-headers</span></div></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Blocking controls</h2>
+          <p>Required controls currently preventing compliance.</p>
+        </div>
+      </div>
+      <div class="blocker-grid">
+        <div class='blocker-card'><div><span class='severity-pill' style='background:#b85a2b'>high</span></div><h3 style='margin-top:10px'>Defender actif</h3><p>Microsoft Defender core protections are not fully enabled.</p><div class='chip-row'><span class='chip'><strong>id:</strong> windows-defender-running</span><span class='chip'><strong>source:</strong> powershell</span></div></div><div class='blocker-card'><div><span class='severity-pill' style='background:#b85a2b'>high</span></div><h3 style='margin-top:10px'>Headers de securite conformes</h3><p>Some required security headers are missing or do not satisfy policy rules.</p><div class='chip-row'><span class='chip'><strong>id:</strong> security-headers</span><span class='chip'><strong>source:</strong> http</span></div></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Findings</h2>
+          <p>Full control table with status and severity indicators.</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Severity</th>
+            <th>Control</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>win-firewall-enabled</code></td><td><span class='status-pill' style='background:#2d7a46'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>pass</span></td><td><span class='severity-pill' style='background:#8f2b1f'>critical</span></td><td>Pare-feu Windows actif</td><td>Windows Firewall is enabled on all profiles.</td></tr>
+<tr><td><code>windows-defender-running</code></td><td><span class='status-pill' style='background:#b03a2e'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>fail</span></td><td><span class='severity-pill' style='background:#b85a2b'>high</span></td><td>Defender actif</td><td>Microsoft Defender core protections are not fully enabled.</td></tr>
+<tr><td><code>security-headers</code></td><td><span class='status-pill' style='background:#b03a2e'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>fail</span></td><td><span class='severity-pill' style='background:#b85a2b'>high</span></td><td>Headers de securite conformes</td><td>Some required security headers are missing or do not satisfy policy rules.</td></tr>
+<tr><td><code>admin-mfa</code></td><td><span class='status-pill' style='background:#2d7a46'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>pass</span></td><td><span class='severity-pill' style='background:#8f2b1f'>critical</span></td><td>MFA active pour les acces admin</td><td>All active Microsoft Entra admin accounts satisfy the MFA requirement.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Technical details</h2>
+          <p>Expand a control to inspect exact evidence, framework mappings, and remediation context.</p>
+        </div>
+      </div>
+      <details class='detail-card'><summary><span class='status-pill' style='background:#2d7a46'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>pass</span> win-firewall-enabled - Pare-feu Windows actif</summary><div class='detail-meta'><span class='severity-pill' style='background:#8f2b1f'>critical</span> <span class='chip'><strong>source:</strong> powershell</span></div><pre>{
+  &quot;control_id&quot;: &quot;win-firewall-enabled&quot;,
+  &quot;title&quot;: &quot;Pare-feu Windows actif&quot;,
+  &quot;control_type&quot;: &quot;windows_firewall_enabled&quot;,
+  &quot;severity&quot;: &quot;critical&quot;,
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;message&quot;: &quot;Windows Firewall is enabled on all profiles.&quot;,
+  &quot;required&quot;: true,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;rationale&quot;: &quot;&quot;,
+  &quot;remediation&quot;: &quot;&quot;,
+  &quot;evidence_source&quot;: &quot;powershell&quot;,
+  &quot;supported_platforms&quot;: [],
+  &quot;references&quot;: [],
+  &quot;frameworks&quot;: {
+    &quot;CIS Controls v8&quot;: [
+      &quot;4.4&quot;
+    ],
+    &quot;NIST CSF 2.0&quot;: [
+      &quot;PR.PS&quot;
+    ]
+  },
+  &quot;tags&quot;: [
+    &quot;CIS&quot;,
+    &quot;NIST-CSF&quot;
+  ],
+  &quot;evidence&quot;: {
+    &quot;profiles&quot;: [
+      &quot;Domain&quot;,
+      &quot;Private&quot;,
+      &quot;Public&quot;
+    ]
+  }
+}</pre></details>
+<details class='detail-card'><summary><span class='status-pill' style='background:#b03a2e'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>fail</span> windows-defender-running - Defender actif</summary><div class='detail-meta'><span class='severity-pill' style='background:#b85a2b'>high</span> <span class='chip'><strong>source:</strong> powershell</span></div><pre>{
+  &quot;control_id&quot;: &quot;windows-defender-running&quot;,
+  &quot;title&quot;: &quot;Defender actif&quot;,
+  &quot;control_type&quot;: &quot;windows_defender_running&quot;,
+  &quot;severity&quot;: &quot;high&quot;,
+  &quot;status&quot;: &quot;fail&quot;,
+  &quot;message&quot;: &quot;Microsoft Defender core protections are not fully enabled.&quot;,
+  &quot;required&quot;: true,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;rationale&quot;: &quot;&quot;,
+  &quot;remediation&quot;: &quot;&quot;,
+  &quot;evidence_source&quot;: &quot;powershell&quot;,
+  &quot;supported_platforms&quot;: [],
+  &quot;references&quot;: [],
+  &quot;frameworks&quot;: {
+    &quot;CIS Controls v8&quot;: [
+      &quot;10.4&quot;
+    ],
+    &quot;NIST CSF 2.0&quot;: [
+      &quot;DE.CM&quot;
+    ]
+  },
+  &quot;tags&quot;: [
+    &quot;CIS&quot;,
+    &quot;NIST-CSF&quot;
+  ],
+  &quot;evidence&quot;: {
+    &quot;failing_checks&quot;: [
+      &quot;AntivirusEnabled&quot;
+    ]
+  }
+}</pre></details>
+<details class='detail-card'><summary><span class='status-pill' style='background:#b03a2e'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>fail</span> security-headers - Headers de securite conformes</summary><div class='detail-meta'><span class='severity-pill' style='background:#b85a2b'>high</span> <span class='chip'><strong>source:</strong> http</span></div><pre>{
+  &quot;control_id&quot;: &quot;security-headers&quot;,
+  &quot;title&quot;: &quot;Headers de securite conformes&quot;,
+  &quot;control_type&quot;: &quot;security_headers&quot;,
+  &quot;severity&quot;: &quot;high&quot;,
+  &quot;status&quot;: &quot;fail&quot;,
+  &quot;message&quot;: &quot;Some required security headers are missing or do not satisfy policy rules.&quot;,
+  &quot;required&quot;: true,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;rationale&quot;: &quot;&quot;,
+  &quot;remediation&quot;: &quot;&quot;,
+  &quot;evidence_source&quot;: &quot;http&quot;,
+  &quot;supported_platforms&quot;: [],
+  &quot;references&quot;: [],
+  &quot;frameworks&quot;: {
+    &quot;OWASP&quot;: [
+      &quot;A05&quot;
+    ],
+    &quot;ISO 27001:2022&quot;: [
+      &quot;8.28&quot;
+    ]
+  },
+  &quot;tags&quot;: [
+    &quot;OWASP&quot;,
+    &quot;ISO27001&quot;
+  ],
+  &quot;evidence&quot;: {
+    &quot;missing_headers&quot;: [
+      &quot;content-security-policy&quot;
+    ]
+  }
+}</pre></details>
+<details class='detail-card'><summary><span class='status-pill' style='background:#2d7a46'><span class='chip-dot' style='background:rgba(255,255,255,0.9)'></span>pass</span> admin-mfa - MFA active pour les acces admin</summary><div class='detail-meta'><span class='severity-pill' style='background:#8f2b1f'>critical</span> <span class='chip'><strong>source:</strong> graph</span></div><pre>{
+  &quot;control_id&quot;: &quot;admin-mfa&quot;,
+  &quot;title&quot;: &quot;MFA active pour les acces admin&quot;,
+  &quot;control_type&quot;: &quot;microsoft_graph_admin_mfa&quot;,
+  &quot;severity&quot;: &quot;critical&quot;,
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;message&quot;: &quot;All active Microsoft Entra admin accounts satisfy the MFA requirement.&quot;,
+  &quot;required&quot;: true,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;rationale&quot;: &quot;&quot;,
+  &quot;remediation&quot;: &quot;&quot;,
+  &quot;evidence_source&quot;: &quot;graph&quot;,
+  &quot;supported_platforms&quot;: [],
+  &quot;references&quot;: [],
+  &quot;frameworks&quot;: {
+    &quot;CIS Controls v8&quot;: [
+      &quot;6&quot;
+    ],
+    &quot;ISO 27001:2022&quot;: [
+      &quot;5.17&quot;
+    ]
+  },
+  &quot;tags&quot;: [
+    &quot;CIS&quot;,
+    &quot;ISO27001&quot;
+  ],
+  &quot;evidence&quot;: {
+    &quot;compliant_admin_count&quot;: 3
+  }
+}</pre></details>
+    </section>
+  </main>
+</body>
+</html>

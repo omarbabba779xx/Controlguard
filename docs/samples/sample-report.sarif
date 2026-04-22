@@ -1,0 +1,153 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "controlguard",
+          "rules": [
+            {
+              "id": "win-firewall-enabled",
+              "shortDescription": {
+                "text": "Pare-feu Windows actif"
+              },
+              "fullDescription": {
+                "text": "Windows Firewall is enabled on all profiles."
+              },
+              "properties": {
+                "severity": "critical",
+                "required": true,
+                "evidence_source": "powershell",
+                "frameworks": {
+                  "CIS Controls v8": [
+                    "4.4"
+                  ],
+                  "NIST CSF 2.0": [
+                    "PR.PS"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "windows-defender-running",
+              "shortDescription": {
+                "text": "Defender actif"
+              },
+              "fullDescription": {
+                "text": "Microsoft Defender core protections are not fully enabled."
+              },
+              "properties": {
+                "severity": "high",
+                "required": true,
+                "evidence_source": "powershell",
+                "frameworks": {
+                  "CIS Controls v8": [
+                    "10.4"
+                  ],
+                  "NIST CSF 2.0": [
+                    "DE.CM"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "security-headers",
+              "shortDescription": {
+                "text": "Headers de securite conformes"
+              },
+              "fullDescription": {
+                "text": "Some required security headers are missing or do not satisfy policy rules."
+              },
+              "properties": {
+                "severity": "high",
+                "required": true,
+                "evidence_source": "http",
+                "frameworks": {
+                  "OWASP": [
+                    "A05"
+                  ],
+                  "ISO 27001:2022": [
+                    "8.28"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "admin-mfa",
+              "shortDescription": {
+                "text": "MFA active pour les acces admin"
+              },
+              "fullDescription": {
+                "text": "All active Microsoft Entra admin accounts satisfy the MFA requirement."
+              },
+              "properties": {
+                "severity": "critical",
+                "required": true,
+                "evidence_source": "graph",
+                "frameworks": {
+                  "CIS Controls v8": [
+                    "6"
+                  ],
+                  "ISO 27001:2022": [
+                    "5.17"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "windows-defender-running",
+          "level": "error",
+          "message": {
+            "text": "Microsoft Defender core protections are not fully enabled."
+          },
+          "properties": {
+            "status": "fail",
+            "severity": "high",
+            "frameworks": {
+              "CIS Controls v8": [
+                "10.4"
+              ],
+              "NIST CSF 2.0": [
+                "DE.CM"
+              ]
+            },
+            "evidence": {
+              "failing_checks": [
+                "AntivirusEnabled"
+              ]
+            }
+          }
+        },
+        {
+          "ruleId": "security-headers",
+          "level": "error",
+          "message": {
+            "text": "Some required security headers are missing or do not satisfy policy rules."
+          },
+          "properties": {
+            "status": "fail",
+            "severity": "high",
+            "frameworks": {
+              "OWASP": [
+                "A05"
+              ],
+              "ISO 27001:2022": [
+                "8.28"
+              ]
+            },
+            "evidence": {
+              "missing_headers": [
+                "content-security-policy"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
